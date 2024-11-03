@@ -20,6 +20,11 @@ class UserServiceImpl implements UserService, UserProvider {
 
     private final UserMapper userMapper;
 
+    /**
+     * Create user from provided userDto object
+     * @param userDto user data to create a new user
+     * @return creted user as UserDto object
+     */
     @Override
     public UserDto createUser(final UserDto userDto) {
         log.info("Creating User {}", userDto);
@@ -30,23 +35,42 @@ class UserServiceImpl implements UserService, UserProvider {
         return userMapper.toDto(userRepository.save(user));
     }
 
+    /**
+     * Retrieve user by user's ID primary key
+     * @param userId id of the user to be searched
+     * @return Opttional object containing user entity
+     */
     @Override
     public Optional<User> getUserEntity(Long userId) {
         return userRepository.findById(userId);
     }
 
+    /**
+     * Retrieve user data
+     * @param userId id of the user to be searched
+     * @return user as UserDto object
+     */
     @Override
     public Optional<UserDto> getUser(final Long userId) {
         return userRepository.findById(userId)
                 .map(userMapper::toDto);
     }
 
+    /**
+     * Retrieve user  data by user's email
+     * @param email The email of the user to be searched
+     * @return user data as UserEmailDto object
+     */
     @Override
     public Optional<UserEmailDto> getUserByEmail(final String email) {
         return userRepository.findByEmail(email)
                 .map(userMapper::toEmailDto);
     }
 
+    /**
+     * Retrieve all users
+     * @return list of all users data as UserDto objects
+     */
     @Override
     public List<UserDto> getAllUsers() {
         return userRepository.findAll()
@@ -55,6 +79,10 @@ class UserServiceImpl implements UserService, UserProvider {
                 .toList();
     }
 
+    /**
+     * Retrieve all users
+     * @return all users as User objects
+     */
     @Override
     public List<User> getAllUsersEntity() {
         return userRepository.findAll()
@@ -62,6 +90,10 @@ class UserServiceImpl implements UserService, UserProvider {
                 .toList();
     }
 
+    /**
+     * Retrieve all users basic data like first name and last name
+     * @return list of users as UserSummaryDto objects
+     */
     @Override
     public List<UserSummaryDto> getAllUsersSimple() {
         return userRepository.findAll()
@@ -85,16 +117,23 @@ class UserServiceImpl implements UserService, UserProvider {
                 .toList();
     }
 
-
+    /**
+     * Delete user object
+     * @param userId user primary key
+     */
     @Override
     public void deleteUser(final Long userId) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
-
         userRepository.deleteById(userId);
-
     }
 
+    /**
+     * Update user data by given primary key and object
+     * @param userId user primary key
+     * @param userDto user data to update
+     * @return updated user as UserDto object
+     */
     @Override
     public UserDto updateUser(final Long userId, UserDto userDto){
 
@@ -117,8 +156,6 @@ class UserServiceImpl implements UserService, UserProvider {
 
     }
 
-
-
     /**
      * Check whether a user's birthdate is before the provided date
      *
@@ -126,7 +163,6 @@ class UserServiceImpl implements UserService, UserProvider {
      * @param date provided date
      * @return {@link Boolean} true if {@param user} was born before {@param date}
      */
-
     private Boolean isOlder(User user, LocalDate date){
         LocalDate userDate = user.getBirthdate();
         return date.isAfter(userDate);
