@@ -15,7 +15,7 @@ public class ScheduleConfig {
 
     private final EmailService emailService;
 
-    @Scheduled(cron = "0 0 0 * * MON")
+    @Scheduled(cron = "0 0 0 1 * *")
     public void scheduleFixedRate() {
         log.info("Sending summaries...");
         emailService.sendSummaries();
