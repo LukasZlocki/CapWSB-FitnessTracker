@@ -17,57 +17,84 @@ class UserController {
 
     private final UserServiceImpl userService;
 
-
+    /**
+     * Retrieve user by given ID as primary key
+     * @param id primary key of user to be updated
+     * @return userDto object
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Object> getUser(@PathVariable("id") Long id) {
-        var user = userService.getUser(id);
-        if(user.isPresent()){
-            return ResponseEntity.ok(user);
+        var userDto = userService.getUser(id);
+        if(userDto.isPresent()){
+            return ResponseEntity.ok(userDto);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("No user found with this id");
     }
 
+    /**
+     * Retrieve user list by user's email
+     * @param email user email
+     * @return list of UserEmailDto users
+     */
     @GetMapping("/email")
     public ResponseEntity<Object> getUserByEmail(@RequestParam("email") String email) {
-        var user = userService.getUserByEmail(email);
-        if(user.isPresent()){
-            return ResponseEntity.ok(user);
+        var usersEmailDto = userService.getUserByEmail(email);
+        if(usersEmailDto.isPresent()){
+            return ResponseEntity.ok(usersEmailDto);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("No user found with this email");
     }
 
+    /**
+     * Retrieve all users which are older than birthday date
+     * @param date user birthdate
+     * @return list of users older than given date
+     */
     @GetMapping("/older/{date}")
     public ResponseEntity<Object> getUsersOlderThen(@PathVariable("date") LocalDate date) {
-        var users = userService.getUsersOlderThen(date);
-        if (users.isEmpty()) {
+        var usersDto = userService.getUsersOlderThen(date);
+        if (usersDto.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("No users found with this date");
         }
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(usersDto);
     }
 
+    /**
+     * Retrieve all users basic data like first name, last name
+     * @return list of UserSummaryDto objects
+     */
     @GetMapping("/simple")
     public ResponseEntity<Object> getUsersSimple() {
-        var users = userService.getAllUsersSimple();
-        if (users.isEmpty()) {
+        var usersSummaryDto = userService.getAllUsersSimple();
+        if (usersSummaryDto.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("No users found");
         }
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(usersSummaryDto);
     }
 
+    /**
+     * Retrieve all users
+     * @return users list as UserDto object
+     */
     @GetMapping
     public ResponseEntity<Object> getUsers() {
-        var users = userService.getAllUsers();
-        if (users.isEmpty()) {
+        var usersDto = userService.getAllUsers();
+        if (usersDto.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("No users found");
         }
-        return ResponseEntity.ok(users);
+        return ResponseEntity.ok(usersDto);
     }
 
+    /**
+     * Adding new user
+     * @param userDto object containing information about user
+     * @return ResponseEntity containing status of operation and massage
+     */
     @PostMapping
     public ResponseEntity<Object> addUser(@RequestBody UserDto userDto) {
 
@@ -89,6 +116,11 @@ class UserController {
         }
     }
 
+    /**
+     * Delete user by user ID primary key
+     * @param id user primary key
+     * @return ResponseEntity indicating result of operation
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
 
@@ -103,6 +135,12 @@ class UserController {
 
     }
 
+    /**
+     * Update user data
+     * @param id user primary key
+     * @param userDto user object with data to update
+     * @return ResponseEntity indicating result of operation and message
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateUser(@PathVariable("id") Long id, @RequestBody UserDto userDto) {
 
